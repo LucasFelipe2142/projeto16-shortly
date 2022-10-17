@@ -20,3 +20,13 @@ export async function postShorter(req, res) {
   );
   res.status(201).send({ shortUrl: newLink });
 }
+
+export async function getShorterId(req, res) {
+  const encurtados = await connection.query(
+    `SELECT * FROM encurtados WHERE id = $1;`,
+    [req.params.id]
+  );
+  if (encurtados.rows.length === 0) return res.sendStatus(401);
+
+  res.status(201).send(encurtados.rows);
+}

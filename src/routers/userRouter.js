@@ -7,7 +7,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.use("/singup", validaPostUser, postUser);
-router.use("/singin", validatePostLogin, postLogin);
+router.post("/singup", validaPostUser, postUser);
+router.post("/singin", validatePostLogin, postLogin);
 
 export default router;
