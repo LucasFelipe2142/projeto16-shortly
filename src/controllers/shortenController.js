@@ -2,7 +2,7 @@ import connection from "../banco/conection.js";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 
-export async function postShorter(req, res) {
+export async function postShorten(req, res) {
   const token = req.headers.authorization?.replace("Bearer ", "");
   const { url } = req.body;
 
@@ -21,7 +21,7 @@ export async function postShorter(req, res) {
   res.status(201).send({ shortUrl: newLink });
 }
 
-export async function getShorterId(req, res) {
+export async function getShortenId(req, res) {
   const encurtados = await connection.query(
     `SELECT * FROM encurtados WHERE id = $1;`,
     [req.params.id]
@@ -29,4 +29,19 @@ export async function getShorterId(req, res) {
   if (encurtados.rows.length === 0) return res.sendStatus(401);
 
   res.status(201).send(encurtados.rows);
+}
+
+export async function getShortenUrl(req, res) {
+  const encurtados = await connection.query(
+    `SELECT * FROM encurtados WHERE "shortUrl" = $1;`,
+    [req.params.shortUrl]
+  );
+  if (encurtados.rows.length === 0) return res.sendStatus(401);
+
+  await connection.query(
+    `UPDATE encurtados SET visits = $1 WHERE "shortUrl" = $2;`,
+    [encurtados.rows[0].visits + 1, req.params.shortUrl]
+  );
+
+  res.redirect(encurtados.rows[0].url);
 }
