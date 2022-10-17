@@ -41,8 +41,8 @@ const schemaPostLogin = Joi.object().keys({
   password: Joi.string().min(1).required(),
 });
 
-export async function validatePostClient(req, res, next) {
-  const validation = schemaPostClient.validate(req.body, {
+export async function validatePostShorten(req, res, next) {
+  const validation = schemaPostShorten.validate(req.body, {
     abortEarly: true,
   });
 
@@ -53,11 +53,8 @@ export async function validatePostClient(req, res, next) {
   next();
 }
 
-const schemaPostClient = Joi.object().keys({
-  name: Joi.string().min(1).required(),
-  phone: Joi.string().min(10).max(11).required(),
-  cpf: Joi.string().min(11).max(11).required(),
-  birthday: Joi.date().required(),
+const schemaPostShorten = Joi.object().keys({
+  url: Joi.string().uri().required(),
 });
 
 export async function validatePostRental(req, res, next) {
