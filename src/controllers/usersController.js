@@ -80,3 +80,12 @@ export async function getUserMe(req, res) {
 
   res.status(200).send(newResponse);
 }
+
+export async function getRanking(req, res) {
+  const getUsers = await connection.query(
+    `SELECT users.id, users.name, COUNT(encurtados."userId") AS "linksCount", SUM(COALESCE(encurtados.visits,0)) as visitCount FROM users
+    LEFT JOIN encurtados ON users.id = encurtados."userId" GROUP BY users.id ORDER BY visitCount DESC LIMIT 10;`
+  );
+  if (getUsers.rows.length === 0) return res.sendStatus(404);
+  res.send(getUsers.rows);
+}

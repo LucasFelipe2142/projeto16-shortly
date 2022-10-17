@@ -23,7 +23,7 @@ export async function postShorten(req, res) {
 
 export async function getShortenId(req, res) {
   const encurtados = await connection.query(
-    `SELECT * FROM encurtados WHERE id = $1;`,
+    `SELECT encurtados.id, encurtados."shortUrl", encurtados.url FROM encurtados WHERE id = $1;`,
     [req.params.id]
   );
   if (encurtados.rows.length === 0) return res.sendStatus(401);
