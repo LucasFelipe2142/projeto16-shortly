@@ -46,3 +46,37 @@ export async function postLogin(req, res) {
     res.status(200).send(token);
   } else res.status(401).send("email e(ou) senha estão incorretos");
 }
+
+export async function getUserMe(req, res) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  const verifyToken = await connection.query(
+    `SELECT * FROM logados WHERE token LIKE $1;`,
+    [token]
+  );
+  const userId = verifyToken.rows[0].userId;
+  console.log(userId);
+  if (verifyToken.rows.length === 0) return res.sendStatus(401);
+  const getUsers = await connection.query(
+    `SELECT users.id,users.name, 
+        JSON_BUILD_OBJECT('id',encurtados.id,'shortUrl',encurtados."shortUrl",'url',encurtados.url,'visitCount',encurtados.visits) AS "shortenedUrls"
+        FROM users 
+      JOIN encurtados ON users.id=encurtados."userId"
+      WHERE users.id = $1;`,
+    [userId]
+  );
+  if (getUsers.rows.length === 0) return res.sendStatus(404);
+  let aux = {
+    id: getUsers.rows[0].id,
+    name: getUsers.rows[0].name,
+    visitCount: null,
+    shortenedUrls: [],
+  };
+  let visits = 0;
+  for (let i = 0; i < getUsers.rows.length; i++) {
+    aux.shortenedUrls.push(getUsers.rows[i].shortenedUrls);
+    visits += getUsers.rows[i].shortenedUrls.visitCount;
+  }
+  let newResponse = { ...aux, visitCount: visits };
+
+  res.status(200).send(newResponse);
+}

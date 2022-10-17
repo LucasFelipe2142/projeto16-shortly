@@ -1,4 +1,8 @@
-import { postUser, postLogin } from "../controllers/usersController.js";
+import {
+  postUser,
+  postLogin,
+  getUserMe,
+} from "../controllers/usersController.js";
 import {
   validaPostUser,
   validatePostLogin,
@@ -9,5 +13,6 @@ const router = express.Router();
 
 router.post("/singup", validaPostUser, postUser);
 router.post("/singin", validatePostLogin, postLogin);
+router.get("/users/me", getUserMe);
 
 export default router;
