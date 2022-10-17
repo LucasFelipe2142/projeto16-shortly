@@ -22,8 +22,8 @@ const schemaPostUser = Joi.object().keys({
   confirmPassword: Joi.string().min(1).required(),
 });
 
-export async function validatePostGame(req, res, next) {
-  const validation = schemaPostGame.validate(req.body, {
+export async function validatePostLogin(req, res, next) {
+  const validation = schemaPostLogin.validate(req.body, {
     abortEarly: true,
   });
 
@@ -34,12 +34,11 @@ export async function validatePostGame(req, res, next) {
   next();
 }
 
-const schemaPostGame = Joi.object().keys({
-  name: Joi.string().min(1).required(),
-  image: Joi.string().uri().required(),
-  stockTotal: Joi.number().min(1).required(),
-  categoryId: Joi.any().required(),
-  pricePerDay: Joi.number().min(1).required(),
+const schemaPostLogin = Joi.object().keys({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required(),
+  password: Joi.string().min(1).required(),
 });
 
 export async function validatePostClient(req, res, next) {
